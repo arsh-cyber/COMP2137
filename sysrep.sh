@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#Arshveer Singh
+#200514360
+
 #gather data from report
 user=$(whoami)
 sysdate=$(date +%F)
@@ -33,9 +36,9 @@ ipcidr=$(ip add | grep inet | grep / | grep brd | awk '{print $2;exit 1}')
 userslogin=$(users | tr " " ",")
 dfspace=$(df -h | awk '// {print $4, ":"$6}')
 pscount=$(ps aux | wc -l)
-ldavg=$(uptime | awk '{print $8,$9,$10}')
+ldavg=$(uptime | awk '{print $8,$9,$10,$11}')
 memoryallo=$(free -h | awk '/Mem:/ {print $3}')
-listnetwork=$(ss -ln | awk '{print $5}' | grep : | grep -v -e "-" -e "e" -e "w" | cut -d : -f2 | sort -n| uniq | tr "\n" ",")
+listnetwork=$(ss -tuln | awk '{print $5}' | grep : | grep -v -e "-" -e "e" -e "w" | cut -d : -f2 | sort -n| uniq | tr "\n" ",")
 ufw=$(sudo ufw status numbered)
 
 echo "
