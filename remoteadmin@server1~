@@ -18,11 +18,11 @@ sed -i "s/$defroute/192.168.16.1/g" $(ls *.yaml)
 #////////////////////      2 Installing the required software          ////////////////////
 echo "
 ///////////////////             installing required softwares       ////////////////////////  "
-apt update && apt install -y openssh-server apache2 squid 1>/dev/null 2> /dev/null
+apt update && apt install -y openssh-server apache2 squid 1>/dev/null
 
 echo "/////////////////////         disallow password authentication for Open SSH      ///////////////////////////"
-sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config 1>/dev/null 2>/dev/null
-sed -i 's/ChallengeResponseAuthentication yes/ChallengeResponseAuthentication no/g' /etc/ssh/sshd_config 1>/dev/null 2>/dev/null
+sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
+sed -i 's/ChallengeResponseAuthentication yes/ChallengeResponseAuthentication no/g' /etc/ssh/sshd_config
 service ssh restart
 
 # Configure Apache2 to listen for HTTP on port 80 and HTTPS on port 443
@@ -57,17 +57,17 @@ sudo ufw reload
 export DEFAULT_SHELL="/bin/bash"
 
 # Create the user accounts
-useradd -m -s $DEFAULT_SHELL dennis 1>/dev/null
-useradd -m -s $DEFAULT_SHELL aubrey 1>/dev/null
-useradd -m -s $DEFAULT_SHELL captain 1>/dev/null
-useradd -m -s $DEFAULT_SHELL snibbles 1>/dev/null
-useradd -m -s $DEFAULT_SHELL brownie 1>/dev/null
-useradd -m -s $DEFAULT_SHELL scooter 1>/dev/null
-useradd -m -s $DEFAULT_SHELL sandy 1>/dev/null
-useradd -m -s $DEFAULT_SHELL perrier 1>/dev/null
-useradd -m -s $DEFAULT_SHELL cindy 1>/dev/null
-useradd -m -s $DEFAULT_SHELL tiger 1>/dev/null
-useradd -m -s $DEFAULT_SHELL yoda 1>/dev/null
+useradd -m -s $DEFAULT_SHELL dennis
+useradd -m -s $DEFAULT_SHELL aubrey
+useradd -m -s $DEFAULT_SHELL captain
+useradd -m -s $DEFAULT_SHELL snibbles
+useradd -m -s $DEFAULT_SHELL brownie
+useradd -m -s $DEFAULT_SHELL scooter
+useradd -m -s $DEFAULT_SHELL sandy
+useradd -m -s $DEFAULT_SHELL perrier
+useradd -m -s $DEFAULT_SHELL cindy
+useradd -m -s $DEFAULT_SHELL tiger
+useradd -m -s $DEFAULT_SHELL yoda
 
 # Add the specified public key to the `authorized_keys` file for the `dennis` user
 cat >> /home/dennis/.ssh/authorized_keys <<EOF
@@ -76,17 +76,15 @@ EOF
 
 echo "///////////////////          Generating ssh-key Gen for all Users           /////////////////////////// "
 for user in dennis aubrey captain snibbles brownie scooter sandy perrier cindy tiger yoda; do
-  mkdir -p /home/$user/.ssh
   echo "y" | ssh-keygen -t rsa -f /home/$user/.ssh/id_rsa -N '' 1>/dev/null
   echo "y" | ssh-keygen -t ed25519 -f /home/$user/.ssh/id_ed25519 -N '' 1>/dev/null
+  mkdir -p /home/$user/.ssh
   # Add the user's public keys to their authorized_keys file
   cat >> /home/$user/.ssh/authorized_keys<<EOF
 $(echo "y" | ssh-keygen -f /home/$user/.ssh/id_rsa -y) 1>/dev/null
 $(echo "y" | ssh-keygen -f /home/$user/.ssh/id_ed25519 -y) 1>/dev/null
 EOF
 done
-
-
 echo""
 echo "Granting Sudo Permission to dennis user"
 usermod -aG sudo dennis 
