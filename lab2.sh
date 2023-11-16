@@ -13,14 +13,13 @@ cd /etc/netplan/
 if [ "$ip" != "192.168.16.21"  ]
   then sed -i "s/$ip/192.168.16.21/g" /etc/hosts
   sed -i "s/$ip/192.168.16.21/g" $(ls *.yaml)
-  echo 'hello'
   else echo "IP address already exist"
   fi
  #to change  gateway
 sed -i "s/$defaultrt/192.168.16.1/g" $(ls *.yaml)
 
 echo "netplan Applying"
-sudo netplan apply
+#sudo netplan apply
 echo "netplan Applied"
 
 
@@ -63,11 +62,11 @@ print output}'; then echo "firewall activated"
 else echo "///////////////      firewall is already activated         /////////////"
 fi
 echo "/////////////////         Adding new firewall rules         ///////////////"
-sudo ufw allow 22/tcp
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
-sudo ufw allow 3128/tcp
-sudo ufw reload
+sudo ufw allow 22/tcp 1>/dev/null
+sudo ufw allow 80/tcp 1>/dev/null
+sudo ufw allow 443/tcp 1>/dev/null
+sudo ufw allow 3128/tcp 1>/dev/null
+sudo ufw reload 1>/dev/null
 
 #/////////////////////////      4 creating users         ///////////////////////////
 
@@ -98,12 +97,14 @@ for user in dennis aubrey captain snibbles brownie scooter sandy perrier cindy t
   echo "y" | ssh-keygen -t rsa -f /home/$user/.ssh/id_rsa -N '' 1>/dev/null
   echo "y" | ssh-keygen -t ed25519 -f /home/$user/.ssh/id_ed25519 -N '' 1>/dev/null
   # Add the user's public keys to their authorized_keys file
-
-  $(echo "y" | ssh-keygen -f /home/$user/.ssh/id_rsa -y) 1>/dev/null
-  $(echo "y" | ssh-keygen -f /home/$user/.ssh/id_ed25519 -y) 1>/dev/null
-  done
+  cat >> /home/$user/.ssh/Keys.pub<<EOF
+$(echo "y" | ssh-keygen -f /home/$user/.ssh/id_rsa -y) 1>/dev/null
+$(echo "y" | ssh-keygen -f /home/$user/.ssh/id_ed25519 -y) 1>/dev/null
+EOF
+done
 
 
 echo""
 echo "Granting Sudo Permission to dennis user"
 usermod -aG sudo dennis 
+echo "Premission Granted"
