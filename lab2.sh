@@ -1,5 +1,6 @@
 #!/bin/bash
-
+#name Arshveer singh
+#200514360
 #tokens
 ip=$(hostname -I | awk '{print $2}')
 defaultrt=$(ip route | grep default | awk '{print $3}')
